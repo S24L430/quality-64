@@ -201,9 +201,16 @@ public class GraphQlIT {
         List<PersistedQuery> listPersistedQueries = headlessClientAuthor.listPersistedQueries("wknd-shared");
 
         assertFalse(listPersistedQueries.isEmpty());
-        PersistedQuery adventuresQuery = listPersistedQueries.stream()
-                .filter(p -> p.getShortPath().equals("/wknd-shared/adventures-all")).findFirst().get();
+
+        Optional<PersistedQuery> optionalAdventuresQuery = listPersistedQueries.stream()
+            .filter(p -> p.getShortPath().equals("/wknd-shared/adventures-all"))
+            .findFirst();
+
+        assertTrue(optionalAdventuresQuery.isPresent(), "Adventures query not found.");
+
+        PersistedQuery adventuresQuery = optionalAdventuresQuery.get();
         assertEquals("/wknd-shared/settings/graphql/persistentQueries/adventures-all", adventuresQuery.getLongPath());
-        assertThat(adventuresQuery.getQuery(), containsString("adventureList") );
+        assertThat(adventuresQuery.getQuery(), containsString("adventureList"));
     }
+
 }
